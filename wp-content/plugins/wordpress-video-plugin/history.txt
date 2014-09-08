@@ -1,0 +1,165 @@
+Version 0.69 - 03.01.2009
+------------------------
+# added support for:
+- OnSMASH
+- dotSUB
+
+# updated code:
+- youtube: fullscreen is now possible
+- myvideo: configuring size & fullscreen is possible
+- clipfish: configuring size & fullscreen is possible
+- yahoo!: configuring size & fullscreen is possible
+- fixed a bug at vimeo code -> http://wordpress.org/support/topic/208723
+
+Version 0.68 - 04.10.2008
+------------------------
+# added support for:
+- wat.tv by Bertimus (http://www.born2buzz.com/)
+- smotri.com
+# fixed bug "errors in archives" -> http://wordpress.org/support/topic/183928
+
+Version 0.67 - 14.06.2008
+------------------------
+# added support for:
+- Generic Flash by Francisco Monteagudo
+- youreporter by Giacomo
+- clipsyndicate.com by Antonio SJ Musumeci
+- Mojvideo.com
+- GoalVideoz
+_ Guba
+# added ability to show videos at rss feed
+# updated veoh.com code
+
+Version 0.66 - 06.04.2008
+------------------------
+# added support for:
+- MEGAVIDEO
+- ReelzChannel
+- d1g.com
+- Trilulilu
+- Funny or Die
+# removed stage6 code; site is shutdown
+# updated code for vimeo 
+
+Version 0.65 - 10.03.2008
+------------------------
+- fixed bug on line 119 and 92
+- fixed problem with fullscreen player for dailymotion
+
+Version 0.64 - 02.03.2008
+------------------------
+# added support for:
+- mncast.com
+- youtube playlist
+- msn (soapbox)
+
+Version 0.63 - 29.12.2007
+------------------------
+# added support for:
+- Jumpcut
+- Collegehumor
+- Hamburg1 Video
+
+Version 0.62 - 28.11.2007
+------------------------
+# added support for:
+- comedycentral by Antonio (http://www.landofbile.com/blog/)
+- reason.tv by Antonio 
+
+Version 0.61 - 25.11.2007
+------------------------
+# added support for:
+- implemented size by <a href="http://www.dickes-en.de">Wolfgang Neikes</a> 
+- vsocial
+- teachertube by -drmike
+- SlideShare developed by <a href="www.mikrosklave.net">Peter Weiland</a>, included by <a href="http://www.bertdesign.de/blog">Markus Bertling</a>
+# first try of making flashplayersize configurable -->test it with youtube
+
+Version 0.60 - 15.10.2007
+------------------------
+# added support for:
+- last.fm
+- Sumo.tv
+# testing svn-access to worpress plugin directory
+
+Version 0.57 - 05.10.2007
+------------------------
+# added support for:
+- Aniboom
+- Brightcove
+- 123video.nl
+
+Version 0.56 - 16.08.2007
+------------------------
+# added support for:
+- Cellfish.com
+
+Version 0.55 - 31.07.2007
+------------------------
+# added support for:
+- tu.tv
+- Stage6
+
+Version 0.54 - 28.07.2007
+------------------------
+# added support for:
+- Yahoo! Video
+- myspacetv
+- IFILM.com
+- VEOH.com
+- GameTrailers.com - thanks to Johno
+- GameVideos.com - thanks to Johno
+- Glumbert - thanks to Dwayne Bailey
+- Wandeo - thanks to PyPe
+
+Version 0.53 - 16.06.2007
+------------------------
+# added support for LiveLeak.com - thanks to Whiteman
+
+Version 0.52 - 18.02.2007
+------------------------
+# added patch for youtube ids, which were converted wrong, thanks to Sigve Indregard from http://indregard.no
+
+Version 0.51 - 17.02.2007
+------------------------
+# renamed the plugin -> now it works with update plugin
+# videos from videotube should not auto play anymore
+
+Version 0.5 - 15.02.2007
+------------------------
+# added support for:
+- break.com
+- metacafe
+- vimeo
+- videotube
+- blip.tv
+- revver
+- UnCut
+- Grouper
+
+# hopefully solved overlapping problem
+
+Version 0.4 - 28.12.2006
+------------------------
+# added support for:
+- sevenload
+- dailymotion
+
+Version 0.3 - 15.12.2006
+------------------------
+# removed wrong code for youtube videos
+# better support for clipfish
+
+Version 0.2 - 13.12.2006
+------------------------
+# first official version of this plugin
+# added support for:
+- MyVideo
+- Clipfish
+
+Version 0.1 - 13.12.2006
+------------------------
+# first version
+# support for:
+- Youtube
+- Google Video
