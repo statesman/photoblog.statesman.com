@@ -1,4 +1,3 @@
-var topWin = window.dialogArguments || opener || parent || top;
 
 function fileDialogStart() {
 	jQuery("#media-upload-error").empty();
@@ -25,11 +24,6 @@ function fileQueued(fileObj) {
 }
 
 function uploadStart(fileObj) {
-	try {
-		if ( typeof topWin.tb_remove != 'undefined' )
-			topWin.jQuery('#TB_overlay').unbind('click', topWin.tb_remove); 
-	} catch(e){}
-
 	return true;
 }
 
@@ -48,11 +42,6 @@ function prepareMediaItem(fileObj, serverData) {
 	// Move the progress bar to 100%
 	jQuery('.bar', item).remove();
 	jQuery('.progress', item).hide();
-
-	try {
-		if ( typeof topWin.tb_remove != 'undefined' )
-			topWin.jQuery('#TB_overlay').click(topWin.tb_remove);
-	} catch(e){}
 
 	// Old style: Append the HTML returned by the server -- thumbnail and form inputs
 	if ( isNaN(serverData) || !serverData ) {
@@ -145,15 +134,10 @@ function prepareMediaItemInit(fileObj) {
 }
 
 function itemAjaxError(id, html) {
-	var item = jQuery('#media-item-' + id);
-	var filename = jQuery('.filename', item).text();
+	var error = jQuery('#media-item-error' + id);
 
-	item.html('<div class="error-div">'
-				+ '<a class="dismiss" href="#">' + swfuploadL10n.dismiss + '</a>'
-				+ '<strong>' + swfuploadL10n.error_uploading.replace('%s', filename) + '</strong><br />'
-				+ html
-				+ '</div>');
-	item.find('a.dismiss').click(function(){jQuery(this).parents('.media-item').slideUp(200, function(){jQuery(this).remove();})});
+	error.html('<div class="file-error"><button type="button" id="dismiss-'+id+'" class="button dismiss">'+swfuploadL10n.dismiss+'</button>'+html+'</div>');
+	jQuery('#dismiss-'+id).click(function(){jQuery(this).parents('.file-error').slideUp(200, function(){jQuery(this).empty();})});
 }
 
 function deleteSuccess(data, textStatus) {
@@ -247,15 +231,8 @@ function wpQueueError(message) {
 
 // file-specific message
 function wpFileError(fileObj, message) {
-	var item = jQuery('#media-item-' + fileObj.id);
-	var filename = jQuery('.filename', item).text();
-
-	item.html('<div class="error-div">'
-				+ '<a class="dismiss" href="#">' + swfuploadL10n.dismiss + '</a>'
-				+ '<strong>' + swfuploadL10n.error_uploading.replace('%s', filename) + '</strong><br />'
-				+ message
-				+ '</div>');
-	item.find('a.dismiss').click(function(){jQuery(this).parents('.media-item').slideUp(200, function(){jQuery(this).remove();})});
+	jQuery('#media-item-' + fileObj.id + ' .filename').after('<div class="file-error"><button type="button" id="dismiss-' + fileObj.id + '" class="button dismiss">'+swfuploadL10n.dismiss+'</button>'+message+'</div>').siblings('.toggle').remove();
+	jQuery('#dismiss-' + fileObj.id).click(function(){jQuery(this).parents('.media-item').slideUp(200, function(){jQuery(this).remove();})});
 }
 
 function fileQueueError(fileObj, error_code, message)  {

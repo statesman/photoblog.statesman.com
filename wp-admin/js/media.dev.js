@@ -31,10 +31,11 @@ var findPosts;
 				_ajax_nonce: $('#_ajax_nonce').val()
 			};
 
-			var selectedItem;
-			$("input[@name='itemSelect[]']:checked").each(function() { selectedItem = $(this).val() });
-			post['post_type'] = selectedItem;
-
+			if ( $('#find-posts-pages').is(':checked') ) {
+				post['pages'] = 1;
+			} else {
+				post['posts'] = 1;
+			}
 			$.ajax({
 				type : 'POST',
 				url : ajaxurl,

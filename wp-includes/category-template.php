@@ -20,7 +20,8 @@ function get_category_link( $category_id ) {
 	$catlink = $wp_rewrite->get_category_permastruct();
 
 	if ( empty( $catlink ) ) {
-		$catlink = home_url('?cat=' . $category_id);
+		$file = get_option( 'home' ) . '/';
+		$catlink = $file . '?cat=' . $category_id;
 	} else {
 		$category = &get_category( $category_id );
 		if ( is_wp_error( $category ) )
@@ -33,7 +34,7 @@ function get_category_link( $category_id ) {
 			$category_nicename = get_category_parents( $category->parent, false, '/', true ) . $category_nicename;
 
 		$catlink = str_replace( '%category%', $category_nicename, $catlink );
-		$catlink = home_url( user_trailingslashit( $catlink, 'category' ) );
+		$catlink = get_option( 'home' ) . user_trailingslashit( $catlink, 'category' );
 	}
 	return apply_filters( 'category_link', $catlink, $category_id );
 }
@@ -175,9 +176,6 @@ function get_the_category_by_ID( $cat_ID ) {
 function get_the_category_list( $separator = '', $parents='', $post_id = false ) {
 	global $wp_rewrite;
 	$categories = get_the_category( $post_id );
-	if ( !is_object_in_taxonomy( get_post_type( $post_id ), 'category' ) )
-		return apply_filters( 'the_category', '', $separator, $parents );
-
 	if ( empty( $categories ) )
 		return apply_filters( 'the_category', __( 'Uncategorized' ), $separator, $parents );
 
@@ -210,7 +208,7 @@ function get_the_category_list( $separator = '', $parents='', $post_id = false )
 		$i = 0;
 		foreach ( $categories as $category ) {
 			if ( 0 < $i )
-				$thelist .= $separator;
+				$thelist .= $separator . ' ';
 			switch ( strtolower( $parents ) ) {
 				case 'multiple':
 					if ( $category->parent )
@@ -317,11 +315,9 @@ function category_description( $category = 0 ) {
  *     'echo' (bool|int) default is 1 - Whether to display or retrieve content.
  *     'depth' (int) - The max depth.
  *     'tab_index' (int) - Tab index for select element.
- *     'name' (string) - The name attribute value for select element.
- *     'id' (string) - The ID attribute value for select element. Defaults to name if omitted.
- *     'class' (string) - The class attribute value for select element.
+ *     'name' (string) - The name attribute value for selected element.
+ *     'class' (string) - The class attribute value for selected element.
  *     'selected' (int) - Which category ID is selected.
- *     'taxonomy' (string) - The name of the taxonomy to retrieve. Defaults to category.
  *
  * The 'hierarchical' argument, which is disabled by default, will override the
  * depth argument, unless it is true. When the argument is false, it will
@@ -341,19 +337,11 @@ function wp_dropdown_categories( $args = '' ) {
 		'hide_empty' => 1, 'child_of' => 0,
 		'exclude' => '', 'echo' => 1,
 		'selected' => 0, 'hierarchical' => 0,
-		'name' => 'cat', 'id' => '',
-		'class' => 'postform', 'depth' => 0,
-		'tab_index' => 0, 'taxonomy' => 'category',
-		'hide_if_empty' => false
+		'name' => 'cat', 'class' => 'postform',
+		'depth' => 0, 'tab_index' => 0
 	);
 
 	$defaults['selected'] = ( is_category() ) ? get_query_var( 'cat' ) : 0;
-
-	// Back compat.
-	if ( isset( $args['type'] ) && 'link' == $args['type'] ) {
-		_deprecated_argument( __FUNCTION__, '3.0', '' );
-		$args['taxonomy'] = 'link_category';
-	}
 
 	$r = wp_parse_args( $args, $defaults );
 
@@ -368,22 +356,13 @@ function wp_dropdown_categories( $args = '' ) {
 	if ( (int) $tab_index > 0 )
 		$tab_index_attribute = " tabindex=\"$tab_index\"";
 
-	$categories = get_terms( $taxonomy, $r );
-	$name = esc_attr( $name );
-	$class = esc_attr( $class );
-	$id = $id ? esc_attr( $id ) : $name;
+	$categories = get_categories( $r );
+	$name = esc_attr($name);
+	$class = esc_attr($class);
 
-	if ( ! $r['hide_if_empty'] || ! empty($categories) )
-		$output = "<select name='$name' id='$id' class='$class' $tab_index_attribute>\n";
-	else
-		$output = '';
-
-	if ( empty($categories) && ! $r['hide_if_empty'] && !empty($show_option_none) ) {
-		$show_option_none = apply_filters( 'list_cats', $show_option_none );
-		$output .= "\t<option value='-1' selected='selected'>$show_option_none</option>\n";
-	}
-
+	$output = '';
 	if ( ! empty( $categories ) ) {
+		$output = "<select name='$name' id='$name' class='$class' $tab_index_attribute>\n";
 
 		if ( $show_option_all ) {
 			$show_option_all = apply_filters( 'list_cats', $show_option_all );
@@ -403,10 +382,8 @@ function wp_dropdown_categories( $args = '' ) {
 			$depth = -1; // Flat.
 
 		$output .= walk_category_dropdown_tree( $categories, $depth, $r );
-	}
-	if ( ! $r['hide_if_empty'] || ! empty($categories) )
 		$output .= "</select>\n";
-
+	}
 
 	$output = apply_filters( 'wp_dropdown_cats', $output );
 
@@ -451,53 +428,44 @@ function wp_dropdown_categories( $args = '' ) {
  */
 function wp_list_categories( $args = '' ) {
 	$defaults = array(
-		'show_option_all' => '', 'show_option_none' => __('No categories'),
-		'orderby' => 'name', 'order' => 'ASC',
-		'show_last_update' => 0, 'style' => 'list',
-		'show_count' => 0, 'hide_empty' => 1,
-		'use_desc_for_title' => 1, 'child_of' => 0,
-		'feed' => '', 'feed_type' => '',
-		'feed_image' => '', 'exclude' => '',
-		'exclude_tree' => '', 'current_category' => 0,
+		'show_option_all' => '', 'orderby' => 'name',
+		'order' => 'ASC', 'show_last_update' => 0,
+		'style' => 'list', 'show_count' => 0,
+		'hide_empty' => 1, 'use_desc_for_title' => 1,
+		'child_of' => 0, 'feed' => '', 'feed_type' => '',
+		'feed_image' => '', 'exclude' => '', 'exclude_tree' => '', 'current_category' => 0,
 		'hierarchical' => true, 'title_li' => __( 'Categories' ),
-		'echo' => 1, 'depth' => 0,
-		'taxonomy' => 'category'
+		'echo' => 1, 'depth' => 0
 	);
 
 	$r = wp_parse_args( $args, $defaults );
 
-	if ( !isset( $r['pad_counts'] ) && $r['show_count'] && $r['hierarchical'] )
+	if ( !isset( $r['pad_counts'] ) && $r['show_count'] && $r['hierarchical'] ) {
 		$r['pad_counts'] = true;
+	}
 
-	if ( isset( $r['show_date'] ) )
+	if ( isset( $r['show_date'] ) ) {
 		$r['include_last_update_time'] = $r['show_date'];
+	}
 
 	if ( true == $r['hierarchical'] ) {
 		$r['exclude_tree'] = $r['exclude'];
 		$r['exclude'] = '';
 	}
 
-	if ( !isset( $r['class'] ) )
-		$r['class'] = ( 'category' == $r['taxonomy'] ) ? 'categories' : $r['taxonomy'];
-
 	extract( $r );
-
-	if ( !taxonomy_exists($taxonomy) )
-		return false;
 
 	$categories = get_categories( $r );
 
 	$output = '';
 	if ( $title_li && 'list' == $style )
-			$output = '<li class="' . $class . '">' . $title_li . '<ul>';
+			$output = '<li class="categories">' . $r['title_li'] . '<ul>';
 
 	if ( empty( $categories ) ) {
-		if ( ! empty( $show_option_none ) ) {
-			if ( 'list' == $style )
-				$output .= '<li>' . $show_option_none . '</li>';
-			else
-				$output .= $show_option_none;
-		}
+		if ( 'list' == $style )
+			$output .= '<li>' . __( "No categories" ) . '</li>';
+		else
+			$output .= __( "No categories" );
 	} else {
 		global $wp_query;
 
@@ -507,7 +475,7 @@ function wp_list_categories( $args = '' ) {
 			else
 				$output .= '<a href="' .  get_bloginfo( 'url' )  . '">' . $show_option_all . '</a>';
 
-		if ( empty( $r['current_category'] ) && ( is_category() || is_tax() ) )
+		if ( empty( $r['current_category'] ) && is_category() )
 			$r['current_category'] = $wp_query->get_queried_object_id();
 
 		if ( $hierarchical )
@@ -521,7 +489,7 @@ function wp_list_categories( $args = '' ) {
 	if ( $title_li && 'list' == $style )
 		$output .= '</ul></li>';
 
-	$output = apply_filters( 'wp_list_categories', $output, $args );
+	$output = apply_filters( 'wp_list_categories', $output );
 
 	if ( $echo )
 		echo $output;
@@ -880,8 +848,7 @@ function term_description( $term = 0, $taxonomy = 'post_tag' ) {
 		$taxonomy = $term->taxonomy;
 		$term = $term->term_id;
 	}
-	$description = get_term_field( 'description', $term, $taxonomy );
-	return is_wp_error( $description ) ? '' : $description;
+	return get_term_field( 'description', $term, $taxonomy );
 }
 
 /**

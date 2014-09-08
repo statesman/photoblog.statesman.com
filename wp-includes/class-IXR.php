@@ -356,7 +356,7 @@ EOD;
             $args = $args[0];
         }
         // Are we dealing with a function or a method?
-        if ( is_string( $method ) && substr($method, 0, 5) == 'this:' ) {
+        if (substr($method, 0, 5) == 'this:') {
             // It's a class method - check it exists
             $method = substr($method, 5);
             if (!method_exists($this, $method)) {
@@ -581,8 +581,7 @@ class IXR_Client {
                 $gettingHeaders = false;
             }
             if (!$gettingHeaders) {
-            	// WP#12559 remove trim so as to not strip newlines from received response.
-                $contents .= $line;
+                $contents .= trim($line);
             }
             if ($this->debug) {
                 $debug_contents .= $line;

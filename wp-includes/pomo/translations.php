@@ -2,7 +2,7 @@
 /**
  * Class for a set of entries for translation and their associated headers
  *
- * @version $Id: translations.php 406 2010-02-07 11:10:24Z nbachiyski $
+ * @version $Id: translations.php 291 2009-10-21 05:46:08Z nbachiyski $
  * @package pomo
  * @subpackage translations
  */
@@ -104,9 +104,7 @@ class Translations {
 	 * @return void
 	 **/
 	function merge_with(&$other) {
-		foreach( $other->entries as $entry ) {
-			$this->entries[$entry->key()] = $entry;
-		}
+		$this->entries = array_merge($this->entries, $other->entries);
 	}
 }
 
@@ -126,7 +124,7 @@ class Gettext_Translations extends Translations {
 		}
 		return call_user_func($this->_gettext_select_plural_form, $count);
 	}
-
+	
 	function nplurals_and_expression_from_header($header) {
 		if (preg_match('/^\s*nplurals\s*=\s*(\d+)\s*;\s+plural\s*=\s*(.+)$/', $header, $matches)) {
 			$nplurals = (int)$matches[1];
@@ -152,7 +150,7 @@ class Gettext_Translations extends Translations {
 	/**
 	 * Adds parantheses to the inner parts of ternary operators in
 	 * plural expressions, because PHP evaluates ternary oerators from left to right
-	 *
+	 * 
 	 * @param string $expression the expression without parentheses
 	 * @return string the expression with parentheses added
 	 */
@@ -180,7 +178,7 @@ class Gettext_Translations extends Translations {
 		}
 		return rtrim($res, ';');
 	}
-
+	
 	function make_headers($translation) {
 		$headers = array();
 		// sometimes \ns are used instead of real new lines
@@ -193,7 +191,7 @@ class Gettext_Translations extends Translations {
 		}
 		return $headers;
 	}
-
+	
 	function set_header($header, $value) {
 		parent::set_header($header, $value);
 		if ('Plural-Forms' == $header) {
@@ -212,7 +210,7 @@ if ( !class_exists( 'NOOP_Translations' ) ):
 class NOOP_Translations {
 	var $entries = array();
 	var $headers = array();
-
+	
 	function add_entry($entry) {
 		return true;
 	}

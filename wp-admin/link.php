@@ -15,7 +15,7 @@ require_once ('admin.php');
 wp_reset_vars(array('action', 'cat_id', 'linkurl', 'name', 'image', 'description', 'visible', 'target', 'category', 'link_id', 'submit', 'order_by', 'links_show_cat_id', 'rating', 'rel', 'notes', 'linkcheck[]'));
 
 if ( ! current_user_can('manage_links') )
-	wp_die( __('You do not have sufficient permissions to edit the links for this site.') );
+	wp_die( __('You do not have sufficient permissions to edit the links for this blog.') );
 
 if ( !empty($_POST['deletebookmarks']) )
 	$action = 'deletebookmarks';
@@ -67,11 +67,9 @@ switch ($action) {
 	case 'add' :
 		check_admin_referer('add-bookmark');
 
-		$redir = wp_get_referer();
-		if ( add_link() )
-			$redir = add_query_arg( 'added', 'true', $redir );
+		add_link();
 
-		wp_redirect( $redir );
+		wp_redirect( wp_get_referer() . '?added=true' );
 		exit;
 		break;
 

@@ -7,13 +7,15 @@
  */
 
 /** Load WordPress Bootstrap */
-require_once( './admin.php' );
+require_once('admin.php');
 
 /** Load WordPress Administration Dashboard API */
-require( './includes/dashboard.php' );
+require( 'includes/dashboard.php' );
 
-@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
-send_nosniff_header();
+/** Load Magpie RSS API or custom RSS API */
+require_once (ABSPATH . WPINC . '/rss.php');
+
+@header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
 
 switch ( $_GET['jax'] ) {
 
@@ -31,10 +33,6 @@ case 'dashboard_secondary' :
 
 case 'dashboard_plugins' :
 	wp_dashboard_plugins_output();
-	break;
-
-case 'dashboard_quick_press' :
-	wp_dashboard_quick_press_output();
 	break;
 
 }

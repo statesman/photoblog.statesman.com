@@ -49,8 +49,6 @@ setCommentsList = function() {
 			el = $('#comment-' + id);
 			note = $('#' + action + '-undo-holder').html();
 
-			el.find('.check-column :checkbox').attr('checked', ''); // Uncheck the row so as not to be affected by Bulk Edits.
-
 			if ( el.siblings('#replyrow').length && commentReply.cid == id )
 				commentReply.close();
 

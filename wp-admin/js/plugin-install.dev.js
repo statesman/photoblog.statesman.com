@@ -22,8 +22,6 @@ jQuery(document).ready(function($) {
 	};
 
 	thickDims().click( function() {
-		tb_click.call(this);
-
 		$('#TB_title').css({'background-color':'#222','color':'#cfcfcf'});
 		$('#TB_ajaxWindowTitle').html('<strong>' + plugininstallL10n.plugin_information + '</strong>&nbsp;' + $(this).attr('title') );
 		return false;
@@ -39,9 +37,5 @@ jQuery(document).ready(function($) {
 		$('#section-holder div.section').hide(); //Hide 'em all
 		$('#section-' + tab).show();
 		return false;
-	});
-
-	$('#install-plugins .action-links .install-now').click( function() {
-		return confirm( plugininstallL10n.ays );
 	});
 });
