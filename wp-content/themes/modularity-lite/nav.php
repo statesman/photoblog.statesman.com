@@ -1,7 +1,7 @@
 <!-- Navigation -->
   <div id="nav">
     <ul>
-      <li style="padding-right:10px; border-right:1px dotted #C4C4C4"><span><a href="http://photoblog.statesman.com/about">About</a></span></li>
+      <li style="padding-right:10px; border-right:1px dotted #C4C4C4"><span><a href="/about">About</a></span></li>
       <li class="drop"><span>Photojournalists</span>
         <ul>
         	<?php wp_list_pages('orderby=name&depth=-1i&exclude=473&title_li='); ?>
