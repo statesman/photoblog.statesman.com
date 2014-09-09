@@ -1,257 +1,284 @@
 <?php
 /**
- * Shadowbox JS, A javascript media viewer plugin for WordPress similar to Lightbox and Thickbox.  Supports all types of media, not just images.
+ * Shadowbox is an online media viewing application that supports all of the web's
+ * most popular media publishing formats. Shadowbox is written entirely in
+ * JavaScript and CSS and is highly customizable. Using Shadowbox, website authors
+ * can display a wide assortment of media in all major browsers without navigating
+ * users away from the linking page.
  *
  * @author Matt Martz <matt@sivel.net>
- * @version 2.0.3.2
+ * @version 3.0.3.10.2
  * @package shadowbox-js
  */
+
 /*
-Plugin Name: Shadowbox JS
-Plugin URI: http://sivel.net/category/wordpress/plugins/
-Description: A javascript media viewer similar to Lightbox and Thickbox. Supports all types of media, not just images. [ <a href="options-general.php?page=shadowbox-js">Settings</a> ] 
-Version: 2.0.3.2
-Author:  Matt Martz <matt@sivel.net>
-Author URI: http://sivel.net
+Plugin Name:  Shadowbox JS
+Plugin URI:   http://sivel.net/wordpress/shadowbox-js/
+Description:  A javascript media viewer similar to Lightbox and Thickbox. Supports all types of media, not just images.
+Version:      3.0.3.10.2
+Author:       Matt Martz
+Author URI:   http://sivel.net/
+Text Domain:  shadowbox-js
+Domain Path:  shadowbox-js/localization
+License:      GPL
 
-	Copyright (c) 2008 Matt Martz (http://sivel.net)
-	Shadowbox JS is released under the GNU General Public License (LGPL)
-	http://www.gnu.org/licenses/lgpl-2.1.txt
+	Shadowbox JS (c) 2008-2012 Matt Martz (http://sivel.net/)
+	Shadowbox JS is released under the GNU General Public License (GPL)
+	http://www.gnu.org/licenses/gpl-2.0.txt
 
-	Shadowbox (c) 2008 Michael J. I. Jackson (http://mjijackson.com/shadowbox)
-	Shadowbox is licensed under the Creative Commons Attribution-Noncommercial-Share Alike license
+	Shadowbox (c) 2007-2010 Michael J. I. Jackson (http://www.shadowbox-js.com/)
+	Shadowbox is licensed under the Shadowbox.js License version 1.0
+	http://www.shadowbox-js.com/LICENSE
+
+	JW FLV Media Player (c) 2008 LongTail As Solutions (http://www.longtailvideo.com/)
+	JW FLV Media Player is licensed under the Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License
 	http://creativecommons.org/licenses/by-nc-sa/3.0/
 */
 
 /**
- * If we are in the admin load the admin functionality
- */
-if ( is_admin () )
-	require_once( dirname ( __FILE__ ) . '/inc/admin.php' );
-
-/**
- * Get specific option from the options table
+ * Shadowbox class for common actions between admin and frontend
  *
- * @param string $option Name of option to be used as array key for retrieving the specific value
- * @return mixed 
- * @since 2.0.3
- */
-function shadowbox_option ( $option ) {
-	$shadowbox = get_option ( 'shadowbox' );
-	return $shadowbox[$option];
-}
-
-
-/**
- * Get the full URL to the plugin
+ * This class contains all of the shared functions required for Shadowbox to work 
+ * on the frontend and admin of WordPress
  *
- * @return string
- * @since 2.0.3
+ * @since 3.0.0.1
+ * @package shadowbox-js
+ * @subpackage frontend
  */
-function plugin_url () {
-	$siteurl = get_option ( 'siteurl' );
-	if ( ! defined ( 'WP_PLUGIN_URL' ) ) :
-		if ( ! defined ( 'WP_CONTENT_URL' ) )
-			define ( 'WP_CONTENT_URL' , get_option ( 'siteurl' ) . '/wp-content' );
-		define ( 'WP_PLUGIN_URL' , WP_CONTENT_URL . '/plugins' );
-	endif;
-	$plugin_url = WP_PLUGIN_URL . '/' . plugin_basename ( dirname ( __FILE__ ) );
-	return $plugin_url;
-}
+class Shadowbox {
 
-/**
- * Enqueue Shadowbox CSS 
- *
- * @since 2.0.3
- */
-function shadowbox_styles () {
-	$skin = shadowbox_option ( 'skin' );
-	wp_enqueue_style ( 'shadowbox-skin' , plugin_url () . '/skin/' . $skin . '/skin.css' , false , false , 'screen' );
-	wp_enqueue_style ( 'shadowbox-extras' , plugin_url () . '/css/extras.css' , false , false , 'screen' );
-	if ( ! did_action ( 'wp_print_styles' ) )
-		wp_print_styles ();
-}
+	/**
+	 * Plugin Version
+	 *
+	 * Holds the current plugin version.
+	 *
+	 * @since 3.0.0.4
+	 * @var int
+	 */
+	var $version = '3.0.3.10';
 
-/**
- * Enqueue Shadowbox javascript and dependencies
- * 
- * @since 2.0.3
- */
-function shadowbox_scripts () {
-	$adapter = 'shadowbox-' . shadowbox_option ( 'library' );
-	$language = shadowbox_option ( 'language' );
-	$skin = shadowbox_option ( 'skin' );
-	wp_register_script ( 'yui' , 'http://yui.yahooapis.com/2.6.0/build/yahoo-dom-event/yahoo-dom-event.js' );
-	wp_register_script ( 'ext-base' , plugin_url () . '/js/ext-base.js' );
-	wp_register_script ( 'ext-core' , plugin_url () . '/js/ext-core.js' );
-	wp_register_script ( 'dojo' , 'http://ajax.googleapis.com/ajax/libs/dojo/1.2.3/dojo/dojo.xd.js' );
-	wp_register_script ( 'mootools' , 'http://ajax.googleapis.com/ajax/libs/mootools/1.2.1/mootools-yui-compressed.js' );
-	wp_register_script ( 'shadowbox-base' , plugin_url () . '/js/adapter/shadowbox-base.js' );
-	wp_register_script ( 'shadowbox-yui' , plugin_url () . '/js/adapter/shadowbox-yui.js' , array ( 'yui' ) );
-	wp_register_script ( 'shadowbox-prototype' , plugin_url () . '/js/adapter/shadowbox-prototype.js' , array ( 'prototype' ) );
-	wp_register_script ( 'shadowbox-jquery' , plugin_url () . '/js/adapter/shadowbox-jquery.js' , array ( 'jquery' ) );
-	wp_register_script ( 'shadowbox-ext' , plugin_url () . '/js/adapter/shadowbox-ext.js' , array ( 'ext-base' , 'ext-core' ) );
-	wp_register_script ( 'shadowbox-dojo' , plugin_url () . '/js/adapter/shadowbox-dojo.js' , array ( 'dojo' ) );
-	wp_register_script ( 'shadowbox-mootools' , plugin_url () . '/js/adapter/shadowbox-mootools.js' , array ( 'mootools' ) );
-	wp_register_script ( 'shadowbox' , plugin_url () . '/js/shadowbox-2.0.js' , array ( $adapter ) );
-	wp_register_script ( 'shadowbox-lang' , plugin_url () . '/js/lang/shadowbox-' . $language . '.js' , array ( 'shadowbox' ) );
-	wp_register_script ( 'shadowbox-skin' , plugin_url () . '/skin/' . $skin . '/skin.js' , array ( 'shadowbox' ) );
-	wp_enqueue_script ( 'shadowbox-lang' );
-	wp_enqueue_script ( 'shadowbox-skin' );
-}
+	/**
+	 * Plugin Options Version
+	 *
+	 * Holds the current options version.  Does not hold the current plugin version.
+	 *
+	 * @since 3.0.0.0
+	 * @var int
+	 */
+	var $dbversion = '3.0.3.3';
 
-/**
- * Echo Shadowbox configuration and initialization scripts
+	/**
+	 * Shadowbox Version
+	 *
+	 * Holds the current shadowbox.js version.
+	 *
+	 * @since 3.0.0.4
+	 * @var int
+	 */
+	var $sbversion = '3.0.3';
 
- * @since 0.1
- */
-function shadowbox_headers () {
-	$shadowbox_start = "\n" . '<!-- Begin Shadowbox JS -->' . "\n";
-	$shadowbox_end = '<!-- End Shadowbox JS -->' . "\n\n";
+	/**
+	 * Options array containing all options for this plugin
+	 *
+	 * @since 3.0.0.1
+	 * @var string
+	 */
+	var $options;
 
-	// Shadowbox initialization options
-	$shadowbox_init_ops = '		animate: ' . shadowbox_option ( 'animate' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		animateFade: ' . shadowbox_option ( 'animateFade' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		animSequence: "' . shadowbox_option ( 'animSequence' ) . '",' . "\n";
-	$shadowbox_init_ops .= '		modal: ' . shadowbox_option ( 'modal' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		overlayColor: "' . shadowbox_option ( 'overlayColor' ) . '",' . "\n";
-	$shadowbox_init_ops .= '		overlayOpacity: ' . shadowbox_option ( 'overlayOpacity' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		flashBgColor: "' . shadowbox_option ( 'flashBgColor' ) . '",' . "\n";
-	$shadowbox_init_ops .= '		autoplayMovies: ' . shadowbox_option ( 'autoplayMovies' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		showMovieControls: ' . shadowbox_option ( 'showMovieControls' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		slideshowDelay: ' . shadowbox_option ( 'slideshowDelay' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		resizeDuration: ' . shadowbox_option ( 'resizeDuration' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		fadeDuration: ' . shadowbox_option ( 'fadeDuration' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		displayNav: ' . shadowbox_option ( 'displayNav' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		continuous: ' . shadowbox_option ( 'continuous' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		displayCounter: ' . shadowbox_option ( 'displayCounter' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		counterType: "' . shadowbox_option ( 'counterType' ) . '",' . "\n";
-	$shadowbox_init_ops .= '		counterLimit: ' . shadowbox_option ( 'counterLimit' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		viewportPadding: ' . shadowbox_option ( 'viewportPadding' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		handleOversize: "' . shadowbox_option ( 'handleOversize' ) . '",' . "\n";
-	$shadowbox_init_ops .= '		handleUnsupported: "' . shadowbox_option ( 'handleUnsupported' ) . '",' . "\n";
-	$shadowbox_init_ops .= '		initialHeight: ' . shadowbox_option ( 'initialHeight' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		initialWidth: ' . shadowbox_option ( 'initialWidth' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		enableKeys: ' . shadowbox_option ( 'enableKeys' ) . ',' . "\n";
-	$shadowbox_init_ops .= '		flvPlayer: "' . plugin_url () . '/flvplayer.swf"';
-
-	// The full Shadowbox configuration
-	$shadowbox_init = '<script type="text/javascript">' . "\n";
-	$shadowbox_init .= '	var shadowbox_conf = {' . "\n";
-	$shadowbox_init .= $shadowbox_init_ops . "\n";
-	$shadowbox_init .= '	};' . "\n";
-	$shadowbox_init .= '	window.onload = function(){' . "\n";
-	$shadowbox_init .= '		Shadowbox.init(shadowbox_conf);' . "\n";
-	$shadowbox_init .= '	};' . "\n";
-	$shadowbox_init .= '</script>'. "\n";
-
-	echo $shadowbox_start . $shadowbox_init . $shadowbox_end;
-}
-
-/**
- * This function is called by the add_filter WordPress function to 
- * link the gallery images directly to their full size counterpart
- *
- * @param string $link The link of the attachment
- * @param integer $id The id of the post
- * @return string
- * @since 2.0.1
- */
-if ( ! function_exists ( 'attachment_direct_linkage' ) ) :
-	function attachment_direct_linkage ( $link , $id ) {
-		$mimetypes = array ( 'image/jpeg' , 'image/png' , 'image/gif' );
-		$post = get_post ( $id );
-		if ( in_array ( $post->post_mime_type , $mimetypes ) )
-			return wp_get_attachment_url ( $id );
-		else
-			return $link;
+	/**
+	 * Setup shared functionality for ADmin and Front End
+	 *
+	 * @return none
+	 * @since 3.0.0.1
+	 */
+	function __construct () {
+		$this->options = get_option ( 'shadowbox' );
 	}
-endif;
 
-/**
- * This function is called by the add_filter WordPress function to add 
- * the rel="shadowbox[post-123]" attribute to all links of a specified
- * type.
- *
- * @param string $content The content of the post
- * @return string
- * @since 2.0.3
- */
-function shadowbox_add_attr_to_link ( $content ) {
-	global $post;
-	
-	// Search Patterns
-	$img_pattern = '/<a(.*?)href=(\'|")([^>]*)\.(bmp|gif|jpe?g|png)(\'|")(.*?)>/i';
-	$mov_pattern = '/<a(.*?)href=(\'|")([^>]*)\.(swf|flv|dv|moo?v|movie|mp4|asf|wmv?|avi|mpe?g)(\'|")(.*?)>/i';
-	$aud_pattern = '/<a(.*?)href=(\'|")([^>]*)\.(mp3|aac)(\'|")(.*?)>/i';
-	$tube_pattern = '/<a(.*?)href=(\'|")([^>]*)(youtube\.com\/(watch|v\/)|video\.google\.com\/googleplayer.swf)(.*?)(\'|")(.*?)>/i';
-	$master_pattern = '/<a(.*?)href=(\'|")([^>]*)(\.(bmp|gif|jpe?g|png|swf|flv|dv|moo?v|movie|mp4|asf|wmv?|avi|mpe?g|mp3|aac)(\'|")|(youtube\.com\/(watch|v\/)|video\.google\.com\/googleplayer.swf))(.*?)>/i';	
+	/**
+	 * Get specific option from the options table
+	 *
+	 * @param string $option Name of option to be used as array key for retrieving the specific value
+	 * @return mixed
+	 * @since 2.0.3
+	 */
+	function get_option ( $option , $options = null ) {
+		if ( is_null ( $options ) )
+			$options = &$this->options;
+		if ( isset ( $options[$option] ) )
+			return $options[$option];
+		else
+			return false;
+	}
 
-	// Rel attrs for different file types
-	$img_rel_attr = 'rel=$2shadowbox[post-' . $post->ID . '];player=img;$5';
-	$mov_rel_attr = 'rel=$2shadowbox[post-' . $post->ID . ']$5';
-	$aud_rel_attr = 'rel=$2shadowbox[post-' . $post->ID . '];player=flv;height=0;$5';
-	$tube_rel_attr = 'rel=$2shadowbox[post-' . $post->ID . '];width=425;height=355;$7';
+	/**
+	 * Get the full URL to the plugin
+	 *
+	 * @return string
+	 * @since 2.0.3
+	 */
+	function plugin_url () {
+		$plugin_url = plugins_url ( plugin_basename ( dirname ( __FILE__ ) ) );
+		return $plugin_url;
+	}
 
-	// Replacement patterns
-	$img_replace = '<a$1href=$2$3.$4$5 ' . $img_rel_attr . '$6>';
-	$mov_replace = '<a$1href=$2$3.$4$5 ' . $mov_rel_attr . '$6>';
-	$aud_replace = '<a$1href=$2$3.$4$5 ' . $aud_rel_attr . '$6>';
-	$tube_replace = '<a$1href=$2$3$4$6$7 ' . $tube_rel_attr . '$8>';
+	/**
+	 * Return an md5 based off of the current options of the plugin and the
+	 * current version of shadowbox.js.
+	 *
+	 * This is used for creating unique cache files and for cache busting.
+	 *
+	 * @since 3.0.3
+	 * @return string
+	 */
+	function md5 () {
+		return md5 ( serialize ( $this->options ) . $this->sbversion );
+	}
 
-	// Non specific search patterns
-	$rel_pattern = '/\ rel=(\'|")(.*?)(\'|")/i';
-	$box_rel_pattern = '/\ rel=(\'|")(.*?)(shadow|light|no)box(.*?)(\'|")/i';
+	/**
+	 * Checks if a file is world readable
+	 *
+	 * @since 3.0.3.3
+	 * @param string $file File to be checked for being world readable
+	 * @return boolean
+	 */
+	function is_world_readable ( $file ) {
+		if ( @file_exists ( $file ) && ( @fileperms ( $file ) & 0444 ) == 0444 )
+			return true;
+		else
+			return false;
+	}
 
-	if ( preg_match_all ( $master_pattern , $content , $links ) ) :
-		foreach ( $links[0] as $link ) :
-			
-			if ( preg_match ( $img_pattern , $link ) && shadowbox_option ( 'autoimg' ) == "true" ) :
-				$link_pattern = $img_pattern;
-				$rel_attr = $img_rel_attr;
-				$link_replace = $img_replace;
-			elseif ( preg_match ( $mov_pattern , $link ) && shadowbox_option ( 'automov' ) == "true" ) :
-				$link_pattern = $mov_pattern;
-				$rel_attr = $mov_rel_attr;
-				$link_replace = $mov_replace;
-			elseif ( preg_match ( $aud_pattern , $link ) && shadowbox_option ( 'autoaud' ) == "true" ) :
-				$link_pattern = $aud_pattern;
-				$rel_attr = $aud_rel_attr;
-				$link_replace = $aud_replace;
-			elseif ( preg_match ( $tube_pattern , $link ) && shadowbox_option ( 'autotube' ) == "true" ) :
-				$link_pattern = $tube_pattern;
-				$rel_attr = $tube_rel_attr;
-				$link_replace = $tube_replace;
-			endif;
-	
-			if ( ! preg_match ( $rel_pattern , $link ) ) :
-				$link_replace = preg_replace ( $link_pattern , $link_replace , $link );
-				$content = str_replace ( $link , $link_replace , $content );
-			else :
-				if ( ! preg_match ( $box_rel_pattern , $link ) ) :
-					preg_match ( $rel_pattern , $link , $link_rel );
-					$link_no_rel = preg_replace( $rel_pattern , '' , $link );
-					$link_replace = preg_replace ( $link_pattern , $link_replace , $link_no_rel );
-					$content = str_replace ( $link , $link_replace , $content );
-				endif;
-			endif;
-		endforeach;
-	endif;
-	return $content;
+	/**
+	 * Escape string to prevent against nasty things.
+	 *
+	 * This is a wrapper function to add some additional measures for making
+	 * sure users don't break things
+	 *
+	 * @since 3.0.3.3
+	 * @param string $string The string to be escaped
+	 * @param string $type The type of escaping to do
+	 * @return string
+	 */
+	function esc ( $string , $type = 'js' ) {
+		global $wp_filter , $merged_filters;
+
+		// Some themes and plugins hook into these filters and muck things up
+		// Remove all filters attached and then restore afterwards
+		$filters = compact ( $wp_filter , $merged_filters );
+		remove_all_filters ( 'js_escape' );
+		remove_all_filters ( 'htmledit_pre' );
+		remove_all_filters ( 'attribute_escape' );
+
+		$string = strip_tags ( $string );
+
+		switch ( $type ) {
+			case 'attr' :
+				$string = esc_attr ( $string );
+				break;
+			case 'htmledit' :
+				$string = wp_htmledit_pre ( $string );
+				break;
+			case 'js' :
+			default:
+				$string = esc_js ( $string );
+				break;
+		}
+
+		// Restore filters that were removed above
+		extract ( $filters );
+
+		return $string;
+	}
+
+	/**
+	 * Deactivate this plugin and die
+	 *
+	 * Used to deactivate the plugin when files critical to it's operation can not be loaded
+	 *
+	 * @since 3.0.0.4
+	 * @return none
+	 */
+	function deactivate_and_die ( $file ) {
+		load_plugin_textdomain ( 'shadowbox-js' , false , 'shadowbox-js/localization' );
+		$message = sprintf ( __( "Shadowbox JS has been automatically deactivated because the file <strong>%s</strong> is missing. Please reinstall the plugin and reactivate." ) , $file );
+		if ( ! function_exists ( 'deactivate_plugins' ) )
+			include ( ABSPATH . 'wp-admin/includes/plugin.php' );
+		deactivate_plugins ( __FILE__ );
+		wp_die ( $message );
+	}
+
+	/**
+	 * Returns whether or not a specific type or all of the automations are enabled
+	 *
+	 * @return boolean
+	 * @since 2.0.4.0
+	 */
+	function is_automatic ( $type = null , $options = null ) {
+		if ( is_null ( $options ) )
+			$options = &$this->options;
+		switch ( $type ) {
+			case 'img'	:
+			case 'mov'	:
+			case 'aud'	:
+			case 'tube' :
+			case 'flv'	:
+				if ( $this->get_option ( "auto{$type}" , $options ) == "true" )
+					return true;
+				else
+					return false;
+				break;
+			default :
+				if (
+					$this->get_option ( 'autoimg' , $options )  == "true" ||
+					$this->get_option ( 'automov' , $options )  == "true" ||
+					$this->get_option ( 'autoaud' , $options )  == "true" ||
+					$this->get_option ( 'autotube' , $options ) == "true" ||
+					$this->get_option ( 'autoflv' , $options )  == "true"
+				)
+					return true;
+				else
+					return false;
+				break;
+		}
+	}
+
+	function protected_options () {
+		return array (
+			'library' ,
+			'language' ,
+			'version' ,
+			'smartLoad' ,
+			'useCache' ,
+			'autoimg' ,
+			'automov' ,
+			'autotube' ,
+			'autoaud' ,
+			'autoflv' ,
+			'enableFlv' ,
+			'genericVideoWidth' ,
+			'genericVideoHeight' ,
+			'players'
+		);
+	}
+
 }
 
-// WordPress hooks
-// only hook in if the options are in the options table so that WordPress will still function
-if ( get_option ( 'shadowbox' ) ) :
-	// Enqueue the Shadowbox CSS and JS files and print Shadowbox init to the head
-	add_action ( 'wp_head' , 'shadowbox_styles' , 8 );
-	add_action ( 'wp_head' , 'shadowbox_scripts' , 9 );
-	add_action ( 'wp_head' , 'shadowbox_headers' );
-	
-	// Automatically add Shadowbox to links
-	if ( shadowbox_option ( 'autoimg' ) == "true" || shadowbox_option ( 'automov' ) == "true" || shadowbox_option ( 'autoaud' ) == "true" || shadowbox_option ( 'autotube' ) == "true" )
-		add_filter ( 'the_content' , 'shadowbox_add_attr_to_link' , 11 );
-	if ( shadowbox_option ( 'autoimg' ) == "true" ) 
-		add_filter ( 'attachment_link' , 'attachment_direct_linkage' , 10 , 2 );
-endif;
-?>
+/**
+ * Instantiate the ShadowboxFrontend or ShadowboxAdmin Class
+ *
+ * Deactivate and die if files can not be included
+ */
+if ( is_admin () ) {
+	if ( @include ( dirname ( __FILE__ ) . '/inc/admin.php' ) ) {
+		$ShadowboxAdmin = new ShadowboxAdmin ();
+	} else {
+		Shadowbox::deactivate_and_die ( dirname ( __FILE__ ) . '/inc/admin.php' );
+	}
+} else {
+	if ( @include ( dirname ( __FILE__ ) . '/inc/frontend.php' ) ) {
+		$ShadowboxFrontend = new ShadowboxFrontend ();
+	} else {
+		Shadowbox::deactivate_and_die ( dirname ( __FILE__ ) . '/inc/frontend.php' );
+	}
+}
