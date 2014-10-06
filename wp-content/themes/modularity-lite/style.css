@@ -208,7 +208,7 @@ ul#portfolio li img {max-width:950px;text-align:center;margin:0;}
 
 
 /**** WP4.0 UPGRADE STYLES ****/
-.wp-caption > img {
+.wp-caption img {
   max-width: 100%;
   height: auto;
 }
