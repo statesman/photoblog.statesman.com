@@ -212,3 +212,7 @@ ul#portfolio li img {max-width:950px;text-align:center;margin:0;}
   max-width: 100%;
   height: auto;
 }
+img.size-full {
+  max-width: 100%;
+  height: auto;
+}
