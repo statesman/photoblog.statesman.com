@@ -23,7 +23,6 @@ $RECYCLE.BIN/
 
 ### WordPress ###
 *.log
-.htaccess
 sitemap.xml
 sitemap.xml.gz
 wp-config.php

@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Disable hotlinking
+  RewriteCond %{HTTP_REFERER} !^$
+  RewriteCond %{HTTP_REFERER} !^http://photoblog.statesman.com/.*$ [NC]
+  RewriteCond %{HTTP_REFERER} !^http://aasphoto.wpengine.com/.*$ [NC]
+  RewriteCond %{HTTP_REFERER} !^http://aasphoto-staging.wpengine.com/.*$ [NC]
+  RewriteCond %{HTTP_REFERER} !^http://localhost/.*$ [NC]
+  RewriteRule \.(gif|jpg|jpeg|ico)$ - [F]
+
+  # Wordpress rewrite rules
+  RewriteRule ^index\.php$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.php [L]
+</IfModule>
