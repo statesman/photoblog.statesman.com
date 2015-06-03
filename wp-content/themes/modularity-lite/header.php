@@ -26,6 +26,9 @@
 	<link rel="alternate" type="application/rss+xml" title="<?php bloginfo('name'); ?> RSS Feed" href="<?php bloginfo('rss2_url'); ?>" />
 	<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 
+  <!-- CMG DTM analytics tags -->
+  <script src="//assets.adobedtm.com/20d5deb47c9e7fe47a9f969db01578a739d7179d/satelliteLib-e08eee823520ab7c52a15d6d94d9c9a265362975.js"></script>
+
 <!-- Javascripts  -->
 	<script type="text/javascript" src="<?php bloginfo('stylesheet_directory'); ?>/js/jquery-1.2.6.min.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('stylesheet_directory'); ?>/js/nav.js"></script>
@@ -61,9 +64,6 @@
 	<?php } ?>
 
 <?php wp_head(); ?>
-
-<!-- CMG DTM analytics tags -->
-<script src="//assets.adobedtm.com/20d5deb47c9e7fe47a9f969db01578a739d7179d/satelliteLib-e08eee823520ab7c52a15d6d94d9c9a265362975.js"></script>
 
 </head>
 
