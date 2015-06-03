@@ -26,6 +26,9 @@
 	<link rel="alternate" type="application/rss+xml" title="<?php bloginfo('name'); ?> RSS Feed" href="<?php bloginfo('rss2_url'); ?>" />
 	<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 
+  <!-- CMG DTM analytics tags -->
+  <script src="//assets.adobedtm.com/20d5deb47c9e7fe47a9f969db01578a739d7179d/satelliteLib-e08eee823520ab7c52a15d6d94d9c9a265362975.js"></script>
+
 <!-- Javascripts  -->
 	<script type="text/javascript" src="<?php bloginfo('stylesheet_directory'); ?>/js/jquery-1.2.6.min.js"></script>
 	<script type="text/javascript" src="<?php bloginfo('stylesheet_directory'); ?>/js/nav.js"></script>
@@ -74,20 +77,10 @@
 </div>
 
 <?php include (TEMPLATEPATH . '/nav.php'); ?>
-<!-- <div style="float:right; margin-top:20px;"><a
-href="http://photoblog.statesman.com/tag/eoy"><img src="/images/eoy_link.jpg"
-/></a></div> -->
 
 
 <div class="clear"></div>
 </div>
-
-<!--
-<div id="top_bar">
-<?php //if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('top') ) : ?>
-<?php //endif; ?>
-</div>
--->
 
 <div class="container">
 <div class="container-inner">
