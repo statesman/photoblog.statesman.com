@@ -62,6 +62,9 @@
 
 <?php wp_head(); ?>
 
+<!-- CMG DTM analytics tags -->
+<script src="//assets.adobedtm.com/20d5deb47c9e7fe47a9f969db01578a739d7179d/satelliteLib-e08eee823520ab7c52a15d6d94d9c9a265362975.js"></script>
+
 </head>
 
 <body>
@@ -74,20 +77,10 @@
 </div>
 
 <?php include (TEMPLATEPATH . '/nav.php'); ?>
-<!-- <div style="float:right; margin-top:20px;"><a
-href="http://photoblog.statesman.com/tag/eoy"><img src="/images/eoy_link.jpg"
-/></a></div> -->
 
 
 <div class="clear"></div>
 </div>
-
-<!--
-<div id="top_bar">
-<?php //if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('top') ) : ?>
-<?php //endif; ?>
-</div>
--->
 
 <div class="container">
 <div class="container-inner">

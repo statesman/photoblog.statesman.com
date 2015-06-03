@@ -34,11 +34,9 @@
 </div>
 </div>
 <?php wp_footer(); ?>
-<?php
-	$tmp_tracking_code = get_option('T_tracking_code');
-	if($tmp_tracking_code != ''){
-		echo stripslashes($tmp_tracking_code);
-	}
-?>
+
+<!-- CMG DTM analytics tags -->
+<script type="text/javascript">_satellite.pageBottom();</script>
+
 </body>
 </html>
