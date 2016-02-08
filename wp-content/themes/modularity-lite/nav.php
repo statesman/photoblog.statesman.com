@@ -22,3 +22,6 @@
       </li>
     </ul>
   </div>
+  <div>
+    <img src="/wp-content/themes/modularity-lite/images/manneye-400-white.png" width="360">    
+  </div>
