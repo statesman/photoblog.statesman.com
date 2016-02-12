@@ -22,6 +22,7 @@
       </li>
     </ul>
   </div>
-  <div>
-    <img src="/wp-content/themes/modularity-lite/images/manneye-400-white.png" width="360">    
+  <div style="width: 200px; float: right; text-align: right;">
+    <div style="color:white;font-size: 80%; text-align:right;">Sponsored by:</div>
+    <img src="/images/MEIlogo_WHITEonBLACK.png" width="150">    
   </div>
