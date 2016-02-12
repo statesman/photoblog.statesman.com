@@ -26,4 +26,3 @@
     <div style="color:white;font-size: 80%; text-align:right;">Sponsored by:</div>
     <a href="http://www.statesman.com/manneye" target="_blank"><img src="/images/MEIlogo_WHITEonBLACK.png" width="150"></a>  
   </div>
-  
