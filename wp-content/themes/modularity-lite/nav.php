@@ -24,5 +24,5 @@
   </div>
   <div style="width: 200px; float: right; text-align: right;">
     <div style="color:white;font-size: 80%; text-align:right;">Sponsored by:</div>
-    <img src="/images/MEIlogo_WHITEonBLACK.png" width="150">    
+    <a href="http://www.statesman.com/manneye" target="_blank"><img src="/images/MEIlogo_WHITEonBLACK.png" width="150"></a>  
   </div>
