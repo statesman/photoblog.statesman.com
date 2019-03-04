@@ -11,7 +11,7 @@
         <ul>
           <li><a href="<?php bloginfo('rss2_url'); ?>" class="icon entries">Subscribe to content</a></li>
           <li><a href="<?php bloginfo('comments_rss2_url'); ?>" class="icon comments">Subscribe to comments</a></li>
-          <li><a href="http://www.statesman.com/community/content/circulation/index.html" class="icon paper">Subscribe to the paper</a></li>
+          <li><a href="https://checkout.statesman.com/" class="icon paper">Subscribe to the paper</a></li>
         </ul>
       </li>
       <li class="drop"><span>Contact</span>
